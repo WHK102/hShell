@@ -80,9 +80,9 @@ Use this script only under controlled environments where you have permission to 
 
 ## How to contribute?
 
-|METHOD                 |WHERE                                                                |
-|-----------------------|---------------------------------------------------------------------|
-|Donate                 |Paypal `yhojann.aguilera@gmail.com`                                  |
-|Find bugs              |Using the [Issues tab](https://github.com/WHK102/hShell/issues)      |
-|Providing new ideas    |Using the [Issues tab](https://github.com/WHK102/hShell/issues)      |
-|Creating modifications |Using the [Pull request tab](https://github.com/WHK102/hShell/pulls) |
+|METHOD                 |WHERE                                                                                        |
+|-----------------------|---------------------------------------------------------------------------------------------|
+|Donate                 |[Paypal](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=KM2KBE8F982KS) |
+|Find bugs              |Using the [Issues tab](https://github.com/WHK102/hShell/issues)                              |
+|Providing new ideas    |Using the [Issues tab](https://github.com/WHK102/hShell/issues)                              |
+|Creating modifications |Using the [Pull request tab](https://github.com/WHK102/hShell/pulls)                         |
