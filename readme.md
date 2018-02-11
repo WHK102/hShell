@@ -126,12 +126,13 @@ For large return messages use callbacks for prevent exhaust of memory on the cli
     {
 
 See the `', 'self::callbackCommandGenericFlush', true);` when `self::callbackCommandGenericFlush` is the callback for print each line in real time without keep the lines in a local variable. Note: the out of buffer is a raw `echo`, dont use `$return`.
-For call your command only call this:
+
+Now, call your command:
 
     hShell:/> custom_command
 
 For arguments use `$argv`, is a array of arguments (separated by blank space). For join all arguments use `implde`, by example: `$argument = implode(' ', $argv)`.
-For more help, show the source code or write a email to [me](whk@elhacker.net)
+For more help, see the source code or write a email to [me](whk@elhacker.net)
 
 
 ## Do not be bad
