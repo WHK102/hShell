@@ -75,8 +75,68 @@ The php server script must be uploaded on the server to be controlled. Then you 
       uname               : Show the full info of the System Operative of the server.
       exit                : Exit of the client but not remove the WebShell on the server. See uninstall.  Alias of quit command.
 
+
+## Execute own codes without modifying the server
+
+You can create and execute your own codes made in PHP language by creating specific functions for it.
+
+### Howto make a custom functions?
+
+In the client.php make a specific conditional between:
+
+    }
+    else if(in_array($command, array('exit', 'quit')))
+    {
+
+For example:
+
+    }
+    else if(in_array($command, array('custom_command')))
+    {
+        $result = $this->sendBuffer('
+            $result = "done!";
+        ');
+        
+        if($echo)
+        {
+            echo $result."\n";
+        }
+        
+        return $result;
+    }
+    else if(in_array($command, array('exit', 'quit')))
+    {
+
+Where `$result = "done!";` is your code that will run on the server. The `$result` is the variable for return the string of result to the client.
+
+For large return messages use callbacks for prevent exhaust of memory on the client, example:
+
+    }
+    else if(in_array($command, array('custom_command')))
+    {
+        $result = $this->sendBuffer('
+            for($i = 0; $i <= 50000; $i++)
+            {
+                echo 'FOO';
+            }
+        ', 'self::callbackCommandGenericFlush', true);
+        echo "\n";
+    }
+    else if(in_array($command, array('exit', 'quit')))
+    {
+
+See the `', 'self::callbackCommandGenericFlush', true);` when `self::callbackCommandGenericFlush` is the callback for print each line in real time without keep the lines in a local variable. Note: the out of buffer is a raw `echo`, dont use `$return`.
+For call your command only call this:
+
+    hShell:/> custom_command
+
+For arguments use `$argv`, is a array of arguments (separated by blank space). For join all arguments use `implde`, by example: `$argument = implode(' ', $argv)`.
+For more help, show the source code or write a email to [me](whk@elhacker.net)
+
+
 ## Do not be bad
 Use this script only under controlled environments where you have permission to execute it. There is no guarantee of its functionality or use, please proceed with discretion.
+
 
 ## How to contribute?
 
