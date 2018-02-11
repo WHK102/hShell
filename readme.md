@@ -62,8 +62,8 @@ The php server script must be uploaded on the server to be controlled. Then you 
       uninstall           : Uninstall the current WebShell on the server.
       install [file path] : Install the WebShell on the specific remote parh.
       mysql [host] [port] [user] [password] : Start an interative MySQL shell connection on the remote server.
-      download [remote path] [local path] : Download a backup of file or directory from server to local path.
       mysqldump [host] [port] [user] [password] [local file] : Make a dump from remote database to local file .sql
+      download [remote path] [local path] : Download a backup of file or directory from server to local path.
       upload [local path] [remote path] : Upload a local file or directory to remote directory (maintains the same permits)
       rm [path]           : Delete the specific file or directory path.
       mkdir [path]        : Make a directory on the server.
