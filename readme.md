@@ -50,7 +50,7 @@ The php server script must be uploaded on the server to be controlled. Then you 
       cat                 : Show the content of remote file.
       tail [file path]    : Read the last lines of specific file.
       cd [directory]      : Navigate to specific remote directory.
-      shell [command]     : Execute a simple command in remote server using the           current remote path. Detect automatic available method on the server. See the call-exec command. Alias of exec and system commands.
+      shell [command]     : Execute a simple command in remote server using the current remote path. Detect automatic available method on the server. See the call-exec command. Alias of exec and system commands.
       force-shell [method] [command] : Force execute a simple command in remote server using an specific php method in current path. Alias of force-exec and force-system commands. Available methods: system, exec, shell_exec, passthru, popen, proc_open, explicit (using double quotes `).
       edit [editor command] [file path] : Edit remote file with specific local command edtor, example: edit vi /etc/shadow
       nano [file path]    : Edit remote file with nano editor on the local system.
@@ -60,7 +60,7 @@ The php server script must be uploaded on the server to be controlled. Then you 
       notepad [file path] : Edit remote file with notepad editor on the local system.
       sublime [file path] : Edit remote file with sublime text editor on the local system.
       uninstall           : Uninstall the current WebShell on the server.
-      install [file path] : Install the WebShell on the specific remote parh.
+      install [file path] : Install a copy of the WebShell on the specific remote parh, if the directory does not exist, it will create it recursively.
       mysql [host] [port] [user] [password] : Start an interative MySQL shell connection on the remote server.
       mysqldump [host] [port] [user] [password] [local file] : Make a dump from remote database to local file .sql
       download [remote path] [local path] : Download a backup of file or directory from server to local path.
