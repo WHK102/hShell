@@ -132,7 +132,7 @@ Now, call your command:
     hShell:/> custom_command
 
 For arguments use `$argv`, is a array of arguments (separated by blank space). For join all arguments use `implde`, by example: `$argument = implode(' ', $argv)`.
-For more help, see the source code or write a email to [me](whk@elhacker.net)
+For more help, see the source code or write a email to [me](mailto:whk@elhacker.net)
 
 
 ## Do not be bad
