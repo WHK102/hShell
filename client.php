@@ -17,7 +17,7 @@ class Client
         if(php_sapi_name() === 'cli') 
         {
             // Header for welcome
-            echo " ──────────── Welcome to hShell 💀 v0.5 Alpha ───────────────── \n";
+            echo " ──────────── Welcome to hShell 💀 v0.6 Alpha ───────────────── \n";
             echo "  Author             : WHK@elhacker.net                         \n";
             echo "  For bugs & updates : https://github.com/WHK102/hShell         \n";
             echo "  Thanks             : To my computer, coffee and the weekend   \n";
