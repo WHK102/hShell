@@ -128,7 +128,7 @@ class Client
                 "* mysql [host] [port] [user] [password] : Start an interative MySQL shell",
                 "      connection on the remote server.",
                 "* mysqldump [host] [port] [user] [password] [local file] : Make a dump from",
-                "      remote database to local file .sql"
+                "      remote database to local file .sql",
                 "* download [remote path] [local path] : Download a backup of file or directory",
                 "      from server to local path.",
                 "* upload [local path] [remote path] : Upload a local file or directory to",
