@@ -180,6 +180,10 @@ The php server script must be uploaded on the server to be controlled. Then you 
       Status      : stable
       Description : Uninstall the current WebShell on the server.
      ──────────────────────────────────────────────────
+      Command     : find-passwords
+      Status      : Alpha
+      Description : Search for all possible common passwords on the remote server.
+     ──────────────────────────────────────────────────
       Command     : exit 
       Status      : stable
       Description : Exit of the client but not remove the WebShell on the server. See uninstall. Alias of quit command.
